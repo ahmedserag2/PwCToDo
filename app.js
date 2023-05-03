@@ -72,6 +72,25 @@ app.post(`/${API_PREFIX}/login`, async (req, res) => {
 });
 
 
+app.post(`/${API_PREFIX}/register`, async (req, res) => {
+  
+  const email = req.body.email; // assuming the request body contains a JSON object with a "mail" and "password" property
+  const password = req.body.password;
+  
+  
+  try {
+    await CognitoAuth.registerUser(email,password);
+    
+    res.status(200).json({status : "user registered"});
+  } catch (error) {
+    console.error(error);
+    res.status(500).send();
+  }
+  
+  
+});
+
+
 app.post(`/${API_PREFIX}/logout`, async (req, res) => {
   
   const token = req.body.token; // assuming the request body contains a JSON object with a "token" and "password" property

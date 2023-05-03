@@ -32,27 +32,7 @@ document.getElementById('close-login-popup').addEventListener('click', function 
   document.getElementById('login-popup').classList.add('hidden');
 });
 
-const signOutButton = document.querySelector('#sign-out');
 
-signOutButton.addEventListener('click', () => {
-
-  let url = `${SERVER_NAME}/${REQUEST_PREFIX}/logout`;
-  fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ token: localStorage.getItem('jwt') })
-  })
-    .then(response => response.json())
-    .then(data => {
-      console.log(data);
-      // Clear the token from localStorage and redirect to the homepage or login page
-      localStorage.removeItem('userId');
-      localStorage.removeItem('jwt');
-
-      window.location.href = '/';
-    })
-    .catch(error => console.error(error));
-});
 
 window.addEventListener('click', function (event) {
   if (event.target === document.getElementById('login-popup')) {
@@ -116,6 +96,53 @@ loginForm.addEventListener('submit', (event) => {
       localStorage.setItem('jwt', data.accessToken);
       location.reload();
       // Do something else with the token, like redirecting to another page
+    })
+    .catch(error => console.error(error));
+});
+
+const signOutButton = document.querySelector('#sign-out');
+
+signOutButton.addEventListener('click', () => {
+
+  let url = `${SERVER_NAME}/${REQUEST_PREFIX}/logout`;
+  fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token: localStorage.getItem('jwt') })
+  })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+      // Clear the token from localStorage and redirect to the homepage or login page
+      localStorage.removeItem('userId');
+      localStorage.removeItem('jwt');
+
+      window.location.href = '/';
+    })
+    .catch(error => console.error(error));
+});
+
+const registerForm = document.querySelector('#register-form');
+
+registerForm.addEventListener('submit', (event) => {
+  event.preventDefault(); // prevent the form from submitting in the default way
+  let url = `${SERVER_NAME}/${REQUEST_PREFIX}/register`;
+
+  // get the user input values
+  const email = document.querySelector('#email-register').value;
+  const password = document.querySelector('#password-register').value;
+  console.log(email);
+
+  // send a request to the server to register the user
+  fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+      // Do something with the response data, like displaying a success message or redirecting to another page
     })
     .catch(error => console.error(error));
 });
