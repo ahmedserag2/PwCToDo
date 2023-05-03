@@ -30,8 +30,13 @@
 			<a class="navbar-brand col-sm-7">PwC ToDo</a>
 			
 			<div class = "col-6 col-md-4">
-			  <button id="open-login-popup" class="btn btn-outline-success" type="submit">SignIn</button>
-			  <button id="open-register-popup" class="btn btn-outline-success" type="submit">SignUp</button>
+				<div class = "notlogged">
+					<button id="open-login-popup" class="btn btn-outline-success" type="submit">SignIn</button>
+					<button id="open-register-popup" class="btn btn-outline-success" type="submit">SignUp</button>
+				</div>
+				<div class = "logged">
+					<button id="sign-out" class="btn btn-outline-success" type="submit">SignOut</button>
+				</div>
 			</div>
 		</nav>
 
@@ -39,7 +44,7 @@
 			<div class="popup-content">
 			  <span id="close-login-popup" class="close">&times;</span>
 			  <h2>Login</h2>
-			  <form>
+			  <form id = "login-form">
 				<label for="email">Email:</label>
 				<input type="text" id="email" name="email" required>
 				<br>
