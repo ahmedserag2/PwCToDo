@@ -1,0 +1,16 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/q4t9i5x0
+  build:
+    commands:
+      - echo Building the Docker image...
+      - docker build -t pwc-handson .
+      - docker tag pwc-handson:latest public.ecr.aws/q4t9i5x0/pwc-handson:latest
+  post_build:
+    commands:
+      - echo Pushing the Docker image to Amazon ECR...
+      - docker push public.ecr.aws/q4t9i5x0/pwc-handson:latest
