@@ -16,10 +16,10 @@ const SERVER_NAME = "http://localhost:3000";
 const REQUEST_PREFIX = "api";
 
 // ITS CONSTANT FOR NOW
-const USER_ID = '0';
+const USER_ID = localStorage.getItem('jwt') ? localStorage.getItem('jwt') : '0';
 
 renderTodoList();
-
+isLoggedIn();
 
 
 //popup handling 
@@ -31,6 +31,8 @@ document.getElementById('open-login-popup').addEventListener('click', function (
 document.getElementById('close-login-popup').addEventListener('click', function () {
   document.getElementById('login-popup').classList.add('hidden');
 });
+
+
 
 window.addEventListener('click', function (event) {
   if (event.target === document.getElementById('login-popup')) {
@@ -70,6 +72,79 @@ document.getElementById('item').addEventListener('keydown', function (e) {
   if ((e.code === 'Enter' || e.code === 'NumpadEnter') && value) {
     addItem(value);
   }
+});
+
+const loginForm = document.getElementById('login-form');
+
+loginForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  let url = `${SERVER_NAME}/${REQUEST_PREFIX}/login`;
+
+  // Send a POST request to the server
+  fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data.userId);
+      localStorage.setItem('userId', data.userId);
+      localStorage.setItem('jwt', data.accessToken);
+      location.reload();
+      // Do something else with the token, like redirecting to another page
+    })
+    .catch(error => console.error(error));
+});
+
+const signOutButton = document.querySelector('#sign-out');
+
+signOutButton.addEventListener('click', () => {
+
+  let url = `${SERVER_NAME}/${REQUEST_PREFIX}/logout`;
+  fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token: localStorage.getItem('jwt') })
+  })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+      // Clear the token from localStorage and redirect to the homepage or login page
+      localStorage.removeItem('userId');
+      localStorage.removeItem('jwt');
+
+      window.location.href = '/';
+    })
+    .catch(error => console.error(error));
+});
+
+const registerForm = document.querySelector('#register-form');
+
+registerForm.addEventListener('submit', (event) => {
+  event.preventDefault(); // prevent the form from submitting in the default way
+  let url = `${SERVER_NAME}/${REQUEST_PREFIX}/register`;
+
+  // get the user input values
+  const email = document.querySelector('#email-register').value;
+  const password = document.querySelector('#password-register').value;
+  console.log(email);
+
+  // send a request to the server to register the user
+  fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+      // Do something with the response data, like displaying a success message or redirecting to another page
+    })
+    .catch(error => console.error(error));
 });
 
 async function getTasks (user_id){
@@ -121,6 +196,28 @@ function addItem (value) {
   })
   .catch(error => console.log(error));
   
+}
+
+function isLoggedIn(){
+  // Check if the user is logged in
+  const userId = localStorage.getItem('userId');
+  if (userId) {
+    // Show the logged-in div
+    document.querySelector('.notlogged').style.display = 'none';
+    document.querySelector('.logged').style.display = 'block';
+    document.querySelector('#unnecessary-div').style.display = 'none';
+    document.querySelector('#necessary-divs').style.display = 'block';
+
+    
+    
+  } else {
+    // Show the not-logged-in div
+    document.querySelector('.notlogged').style.display = 'block';
+    document.querySelector('.logged').style.display = 'none';
+    document.querySelector('#necessary-divs').style.display = 'none';
+    document.querySelector('#unnecessary-div').style.display = 'block';
+
+  }
 }
 
 async function renderTodoList() {

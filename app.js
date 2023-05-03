@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
+const jwt = require('jsonwebtoken');
 
 
 const app = express();
@@ -8,6 +9,7 @@ app.use(bodyParser.json());
 const port = process.env.PORT || 3000;
 
 const TaskModel = require('./db/tasks');
+const CognitoAuth = require('./cognito');
 const TABLE_NAME = 'Tasks'
 const USER_ID = '0';
 
@@ -45,6 +47,64 @@ app.post(`/${API_PREFIX}/create_task`, (req, res) => {
       res.status(500).send("Error creating item");
     });
     
+});
+
+app.post(`/${API_PREFIX}/login`, async (req, res) => {
+  
+  const email = req.body.email; // assuming the request body contains a JSON object with a "mail" and "password" property
+  const password = req.body.password;
+  
+  
+  try {
+    const token = await CognitoAuth.loginUser(email,password);
+    const access_token = token.AuthenticationResult.AccessToken;
+    const auth_token = token.AuthenticationResult.IdToken;
+    const decodedToken = jwt.decode(auth_token, { complete: true });
+    // Extract the user ID from the payload
+    const userId = decodedToken.payload.sub;
+    res.status(200).json({"userId":userId, "accessToken" : access_token});
+  } catch (error) {
+    console.error(error);
+    res.status(500).send();
+  }
+  
+  
+});
+
+
+app.post(`/${API_PREFIX}/register`, async (req, res) => {
+  
+  const email = req.body.email; // assuming the request body contains a JSON object with a "mail" and "password" property
+  const password = req.body.password;
+  
+  
+  try {
+    await CognitoAuth.registerUser(email,password);
+    
+    res.status(200).json({status : "user registered"});
+  } catch (error) {
+    console.error(error);
+    res.status(500).send();
+  }
+  
+  
+});
+
+
+app.post(`/${API_PREFIX}/logout`, async (req, res) => {
+  
+  const token = req.body.token; // assuming the request body contains a JSON object with a "token" and "password" property
+  
+  
+  try {
+    await CognitoAuth.logoutUser(token);
+    res.status(200).json({status:"token removed"});
+  } catch (error) {
+    console.error(error);
+    res.status(500).send();
+  }
+  
+  
 });
 
 app.get(`/${API_PREFIX}/get_tasks/:user_id`, (req, res) => {

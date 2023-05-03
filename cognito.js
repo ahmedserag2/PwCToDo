@@ -61,4 +61,20 @@ async function loginUser(email, password) {
   }
 }
 
-module.exports = { registerUser, loginUser };
+// Logout the currently signed-in user
+async function logoutUser(accessToken) {
+  const params = {
+    AccessToken: accessToken
+  };
+
+  try {
+    const result = await cognito.globalSignOut(params).promise();
+    console.log('User logged out:', result);
+    return result;
+  } catch (error) {
+    console.error('Error logging out user:', error);
+    throw error;
+  }
+}
+
+module.exports = { registerUser, loginUser, logoutUser };
