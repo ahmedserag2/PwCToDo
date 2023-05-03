@@ -27,12 +27,12 @@ const API_PREFIX = "api";
 app.post(`/${API_PREFIX}/create_task`, (req, res) => {
   
   const task = req.body.task; // assuming the request body contains a JSON object with a "task" property
-
+  const user_id = req.body.user_id;
   
   const params = {
     TableName: TABLE_NAME,
     Item: {
-      UserId: USER_ID,
+      UserId: user_id,
       Task: task
     }
   }
@@ -62,6 +62,7 @@ app.post(`/${API_PREFIX}/login`, async (req, res) => {
     const decodedToken = jwt.decode(auth_token, { complete: true });
     // Extract the user ID from the payload
     const userId = decodedToken.payload.sub;
+    console.log(userId);
     res.status(200).json({"userId":userId, "accessToken" : access_token});
   } catch (error) {
     console.error(error);
@@ -130,14 +131,15 @@ app.get(`/${API_PREFIX}/get_tasks/:user_id`, (req, res) => {
 
 app.delete(`/${API_PREFIX}/delete_task/:params`, async (req, res) => {
   
-  const task = JSON.parse(decodeURIComponent(req.params.params));
-
+  const taskObj = JSON.parse(decodeURIComponent(req.params.params));
+  //console.log("TASK: " + task.userId);
   //console.log("DELETE: " + task)
+  
   const params = {
     TableName: TABLE_NAME,
     Key: {
-      UserId: USER_ID,
-      Task: task,
+      UserId: taskObj.userId,
+      Task: taskObj.task,
 
     },
   };

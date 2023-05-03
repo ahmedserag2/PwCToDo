@@ -16,7 +16,7 @@ const SERVER_NAME = "http://localhost:3000";
 const REQUEST_PREFIX = "api";
 
 // ITS CONSTANT FOR NOW
-const USER_ID = localStorage.getItem('jwt') ? localStorage.getItem('jwt') : '0';
+const USER_ID = localStorage.getItem('userId') ? localStorage.getItem('userId') : '0';
 
 renderTodoList();
 isLoggedIn();
@@ -185,7 +185,7 @@ function addItem (value) {
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ task: value })
+    body: JSON.stringify({ task: value ,user_id:USER_ID})
   })
   .then(response => {
     if (response.ok) {
@@ -263,7 +263,8 @@ function removeItem() {
   //fetching starts here
   //value is the sort key which is the content of the task
   let url = `${SERVER_NAME}/${REQUEST_PREFIX}/delete_task/`;
-  url = url + encodeURIComponent(JSON.stringify(value));
+  const task = {userId: USER_ID , task:value,}
+  url = url + encodeURIComponent(JSON.stringify(task));
     fetch(url, {
     method: 'DELETE',
     })
