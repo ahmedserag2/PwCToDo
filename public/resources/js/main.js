@@ -16,7 +16,7 @@ const SERVER_NAME = "http://localhost:3000";
 const REQUEST_PREFIX = "api";
 
 // ITS CONSTANT FOR NOW
-const USER_ID = '0';
+const USER_ID = localStorage.getItem('jwt') ? localStorage.getItem('jwt') : '0';
 
 renderTodoList();
 isLoggedIn();
@@ -205,10 +205,18 @@ function isLoggedIn(){
     // Show the logged-in div
     document.querySelector('.notlogged').style.display = 'none';
     document.querySelector('.logged').style.display = 'block';
+    document.querySelector('#unnecessary-div').style.display = 'none';
+    document.querySelector('#necessary-divs').style.display = 'block';
+
+    
+    
   } else {
     // Show the not-logged-in div
     document.querySelector('.notlogged').style.display = 'block';
     document.querySelector('.logged').style.display = 'none';
+    document.querySelector('#necessary-divs').style.display = 'none';
+    document.querySelector('#unnecessary-div').style.display = 'block';
+
   }
 }
 
