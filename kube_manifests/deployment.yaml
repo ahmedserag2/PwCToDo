@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-ecr-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pwc-handson
+  template:
+    metadata:
+      labels:
+        app: pwc-handson
+    spec:
+      containers:
+      - name: pwc-handson
+        image: 822557716970.dkr.ecr.eu-central-1.amazonaws.com/private-pwc-hands-on:latest
+        ports:
+        - containerPort: 3000
+        imagePullPolicy: Always
+      imagePullSecrets:
+      - name: ecr-credentials

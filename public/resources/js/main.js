@@ -192,6 +192,7 @@ function addItem (value) {
       console.log("Item created successfully");
     } else {
       console.log("Error creating item");
+      console.log(response)
     }
   })
   .catch(error => console.log(error));
