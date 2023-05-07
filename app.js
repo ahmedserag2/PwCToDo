@@ -44,7 +44,7 @@ app.post(`/${API_PREFIX}/create_task`, (req, res) => {
     })
     .catch(err => {
       console.log(err);
-      res.status(500).send("Error creating item");
+      res.status(500).send(err);
     });
     
 });
